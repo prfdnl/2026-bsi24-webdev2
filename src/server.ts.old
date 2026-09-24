@@ -1,0 +1,117 @@
+// CRUD           HTTP           DB
+// [C]reate       POST           INSERT
+// [R]ead         GET            SELECT
+// [U]date        PUT            UPDATE
+// [U]date        PATCH          UPDATE (parcial)
+// [D]elete       DELETE         DELETE
+
+// HONO
+// ArkType
+
+import { db } from "./database-connect"
+
+const server = Bun.serve({
+  port: 3000,
+  routes: {
+    "/": {
+      GET: () => new Response("__SEU_NOME__ GET"),
+
+      PUT: () => new Response("__SEU_NOME__ PUT"),
+
+      PATCH: () => new Response("__SEU_NOME__ PATCH"),
+
+      POST: () => new Response("__SEU_NOME__ POST"),
+
+      DELETE: () => new Response("__SEU_NOME__ DELETE")
+    },
+
+    "/teste": {
+      GET: (req) => {
+        const url = new URL(req.url)
+        const search = url.searchParams
+        const nome = search.get("nome")
+        console.log(nome)
+        return new Response("__SEU_NOME__ GET")
+      },
+
+      PUT: () => new Response("__SEU_NOME__ PUT"),
+
+      PATCH: () => new Response("__SEU_NOME__ PATCH"),
+
+      POST: async (req) => {
+        const body = await req.body?.text()
+        console.log(body)
+        return new Response("__SEU_NOME__ POST")
+      },
+
+      DELETE: () => new Response("__SEU_NOME__ DELETE")
+    },
+
+    "/usuario": {
+      GET: async (req) => {
+        const query = db.query(`SELECT * FROM usuarios`)
+        const data = query.all()
+        return Response.json(data)
+      },
+
+      POST: async (req) => {
+        try {
+          const body = await req.body?.json()
+          if (!body.nome)
+            return Response.json("faltou nome", { status: 400 })
+          if (!body.idade || isNaN(body.idade))
+            return Response.json("idade precisa ser um número inteiro", { status: 400 })
+          if (!body.email || !body.email.includes("@"))
+            return Response.json("precisa incluir email válido", { status: 400 })
+          const query = db.query(`
+          INSERT INTO usuarios (nome, idade, email) 
+          VALUES ($nome, $idade, $email) 
+        `)
+          const resp = query.run({
+            $nome: body.nome,
+            $idade: body.idade,
+            $email: body.email,
+          })
+          return Response.json(resp)
+        } catch (e: any) {
+          if (e instanceof SyntaxError)
+            return Response.json("json mal formatado", { status: 400 })
+          return Response.json({
+            message: "Internal Server Error",
+            detail: e.message
+          }, { status: 500 })
+        }
+      }
+    },
+
+    "/usuario/:id": {
+      GET: (req) => {
+        const query = db.query(`SELECT * FROM usuarios WHERE id=:id`)
+        const data = query.get({ ":id": req.params.id })
+        return Response.json(data)
+      },
+      
+      PUT: async (req) => {
+        const body = await req.body?.json()
+        const query = db.query(`UPDATE usuarios SET idade=:idade, nome=:nome, email=:email WHERE id=:id LIMIT 1`)
+        const data = query.run({
+          ":id": req.params.id,
+          ":nome": body.nome,
+          ":idade": body.idade,
+          ":email": body.email,
+        })
+        return Response.json(data)
+      },
+      
+      DELETE: (req) => {
+        const query = db.query(`DELETE FROM usuarios WHERE id=:id LIMIT 1`)
+        const data = query.run({ ":id": req.params.id })
+        if (data.changes > 0)
+          return Response.json({}, { status: 204 })
+        return Response.json("Not found", { status: 404 })
+      },
+    }
+  }
+})
+
+console.log(`Server is running on ${server.url}`)
