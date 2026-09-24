@@ -1,8 +1,8 @@
-import { usuarios } from './usuario'
+import { route } from './usuario'
 import { Hono } from 'hono'
 
 const routes = new Hono()
 
-routes.route("/", usuarios)
+routes.route("/", route)
 
 export { routes }
