@@ -1,5 +1,5 @@
 {
-  "name": "03.bun-server",
+  "name": "2026-bsi24-webdev2",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -8,8 +8,5 @@
   },
   "peerDependencies": {
     "typescript": "^7"
-  },
-  "dependencies": {
-    "hono": "^4.13.8"
   }
 }
