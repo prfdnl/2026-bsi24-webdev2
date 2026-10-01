@@ -1,4 +1,6 @@
 import { db } from "../database-connect"
+import { funcaoValidate } from "../services/input"
+
 
 export const create = async (c) => {
   try {
@@ -51,6 +53,12 @@ export const deleteOne = async (c) => {
 
 export const updateOne = async (c) => {
   const body = await c.req.json()
+  try{
+    funcaoValidate(body, c.req.param("id"))
+  } catch(error: any) {
+    return c.json(error, {status: 400});
+  }
+
   const query = db.query(`UPDATE usuarios SET idade=:idade, nome=:nome, email=:email WHERE id=:id LIMIT 1`)
   const data = query.run({
     ":id": c.req.param("id"),
