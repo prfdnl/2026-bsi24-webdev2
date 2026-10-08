@@ -1,9 +1,20 @@
 import { Hono } from 'hono'
 import * as controller from "../controllers/usuario"
+import { type } from 'arktype'
+import { ffInputType } from '../middleware/inputTest'
+
+const protoSchema: any = {
+  nome: "string",
+  idade: "number",
+  email: "string.email",
+}
+const User = type(protoSchema)
+const UserId = type({ ...protoSchema, id: "string.numeric" })
+
 const route = new Hono()
 route.get('/usuario', controller.listAll)
-route.post('/usuario', controller.create)
+route.post('/usuario', ffInputType(User), controller.create)
 route.get('/usuario/:id', controller.listOne)
 route.delete('/usuario/:id', controller.deleteOne)
-route.put('/usuario/:id', controller.updateOne)
+route.put('/usuario/:id', ffInputType(UserId), controller.updateOne)
 export { route }
