@@ -7,6 +7,7 @@ const protoSchema: any = {
   nome: "string",
   idade: "number",
   email: "string.email",
+  password: "string"
 }
 const User = type(protoSchema)
 const UserId = type({ ...protoSchema, id: "string.numeric" })

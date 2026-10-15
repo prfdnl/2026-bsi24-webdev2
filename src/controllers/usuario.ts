@@ -4,13 +4,14 @@ import { db } from "../database-connect"
 export const create = async (c: Context) => {
   const body = await c.req.json()
   const query = db.query(`
-    INSERT INTO usuarios (nome, idade, email) 
-    VALUES ($nome, $idade, $email) 
+    INSERT INTO usuarios (nome, idade, email, password_hash) 
+    VALUES (:nome, :idade, :email, :password_hash) 
   `)
   const resp = query.run({
-    $nome: body.nome,
-    $idade: body.idade,
-    $email: body.email,
+    ":nome": body.nome,
+    ":idade": body.idade,
+    ":email": body.email,
+    ":password_hash": await Bun.password.hash(body.password)
   })
   return c.json(resp)
 }
