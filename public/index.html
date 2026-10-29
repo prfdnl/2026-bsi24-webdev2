@@ -4,25 +4,50 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
+  <style>
+    div.tabs input.trigger {
+      display: none;
+    }
+
+    div.tabs input.trigger + * {
+      display: none;
+    }
+
+    div.tabs input.trigger:checked + * {
+      display: block;
+    }
+
+    div.tabs:has(#login:checked) label[for="login"],
+    div.tabs:has(#singin:checked) label[for="singin"] {
+      background-color: red;
+    }
+  </style>
 </head>
 
 <body>
   <h1>Meu Projeto: Exemplo</h1>
 
-  <form class="login">
-    <input required type="email" name="email" placeholder="email">
-    <input required type="password" name="password" placeholder="password">
-    <button>entrar</button>
-  </form>
+  <div class="tabs">
+    <label for="login">login</label>
+    <label for="singin">sign in</label>
 
-  <form class="signin">
-    <input require type="text" name="nome" placeholder="name">
-    <input required type="number" min="0" max="123" name="idade" placeholder="idade">
-    <input required type="email" name="email" placeholder="email" placeholder="email">
-    <input required minlength="6" type="password" name="password" placeholder="password">
-    <input required minlength="6" type="password" name="password-confirm" placeholder="cofirm password">
-    <button>cadastrar-se</button>
-  </form>
+    <input id="login" name="zzz" type="radio" class="trigger" checked>
+    <form class="login">
+      <input required type="email" name="email" placeholder="email">
+      <input required type="password" name="password" placeholder="password">
+      <button>entrar</button>
+    </form>
+
+    <input id="singin" name="zzz" type="radio" class="trigger">
+    <form class="signin">
+      <input require type="text" name="nome" placeholder="name">
+      <input required type="number" min="0" max="123" name="idade" placeholder="idade">
+      <input required type="email" name="email" placeholder="email" placeholder="email">
+      <input required minlength="6" type="password" name="password" placeholder="password">
+      <input required minlength="6" type="password" name="password-confirm" placeholder="cofirm password">
+      <button>cadastrar-se</button>
+    </form>
+  </div>
 
   <script>
     const frmLogin = document.querySelector("form.login")
@@ -52,7 +77,7 @@
       return alert("erro não tratado")
     })
 
-    // -----------------------------------------------------------------
+    // ----------------------------------------------------------------------
 
     const frmSingin = document.querySelector("form.signin")
 
