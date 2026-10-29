@@ -3,6 +3,9 @@ import { db } from "../database-connect"
 
 export const create = async (c: Context) => {
   const body = await c.req.json()
+  // @tip: o email não pode ser repetido, por isso o ideal seria
+  //       tentar buscar o email no banco de dados e somente permitir
+  //       o cadastro caso o email não exista
   const query = db.query(`
     INSERT INTO usuarios (nome, idade, email, password_hash) 
     VALUES (:nome, :idade, :email, :password_hash) 
